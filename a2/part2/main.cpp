@@ -6,9 +6,10 @@
 #include <sstream>
 
 int main(int argc, char** argv) {
-    size_t validPass{}, goodChar{}, upper{}, lower{};
+    size_t validPass{}, first{}, second{}, count{};
     std::string line{}, temp{};
     char criteria{};
+    bool foundCriteria = false;
     std::ifstream file("input.txt");
 
     while (file) {
@@ -18,21 +19,28 @@ int main(int argc, char** argv) {
         std::stringstream lStream(line);
         // get lower character limit
         getline(lStream, temp, '-');
-        lower = stoi(temp);
+        first = stoi(temp);
         // get upper character limit
         getline(lStream, temp, ' ');
-        upper = stoi(temp);
+        second = stoi(temp);
         // get character required in password
         criteria = lStream.get();
-
+        lStream.get();
+        lStream.get();
         // check password for number of specified character
         while (lStream) {
-            if (lStream.get() == criteria) goodChar++;
+            count++;
+            if (lStream.get() == criteria && (count == first || count == second)) {
+                if (!foundCriteria) {
+                    validPass++;
+                    foundCriteria = true;
+                } else {
+                    validPass--;
+                }
+            }
         }
-        // if instances of specified in the char are in bounds
-        // increase count of good passwords
-        if ( goodChar >= lower && goodChar <= upper) validPass++;
-        goodChar = 0;
+        foundCriteria = false;
+        count = 0;
     }
 
     std::cout << validPass << "\n";
